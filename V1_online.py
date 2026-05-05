@@ -3,19 +3,19 @@ import streamlit as st
 st.markdown("""
 <style>
 html {
-    font-size: 20px !important;
+    font-size: 50px !important;
 }
 
 body {
-    font-size: 20px !important;
+    font-size: 50px !important;
 }
 
 [data-testid="stAppViewContainer"] {
-    font-size: 20px !important;
+    font-size: 50px !important;
 }
 
 [data-testid="stMarkdownContainer"] p {
-    font-size: 20px !important;
+    font-size: 50px !important;
 }
 
 h1 {
