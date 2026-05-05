@@ -1,3 +1,11 @@
+st.markdown("""
+    <style>
+    html, body, [class*="css"]  {
+        font-size: 18px !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 import streamlit as st
 
 PASSWORD = "Master"
