@@ -1,3 +1,5 @@
+import streamlit as st
+
 st.markdown("""
     <style>
     html, body, [class*="css"]  {
@@ -5,8 +7,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
-import streamlit as st
 
 PASSWORD = "Master"
 
