@@ -1,27 +1,11 @@
 import streamlit as st
 
 st.markdown("""
-<style>
-html {
-    font-size: 20px !important;
-}
-
-body {
-    font-size: 20px !important;
-}
-
-[data-testid="stAppViewContainer"] {
-    font-size: 20px !important;
-}
-
-[data-testid="stMarkdownContainer"] p {
-    font-size: 20px !important;
-}
-
-h1 {
-    font-size: 48px !important;
-}
-</style>
+    <style>
+    html, body, [class*="css"]  {
+        font-size: 18px !important;
+    }
+    </style>
 """, unsafe_allow_html=True)
 
 PASSWORD = "Master"
@@ -156,8 +140,8 @@ result = Image.fromarray(img_np)
 draw = ImageDraw.Draw(result)
 
 try:
-    font = ImageFont.truetype("arial.ttf", 50)
-    font_big = ImageFont.truetype("arial.ttf", 50)
+    font = ImageFont.truetype("arial.ttf", 150)
+    font_big = ImageFont.truetype("arial.ttf", 200)
 except:
     font = ImageFont.load_default()
     font_big = font
