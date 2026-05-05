@@ -2,11 +2,24 @@ import streamlit as st
 
 st.markdown("""
 <style>
-html, body, [class*="css"] {
-    font-size: 18px !important;
+html {
+    font-size: 20px !important;
 }
+
+body {
+    font-size: 20px !important;
+}
+
+[data-testid="stAppViewContainer"] {
+    font-size: 20px !important;
+}
+
+[data-testid="stMarkdownContainer"] p {
+    font-size: 20px !important;
+}
+
 h1 {
-    font-size: 42px !important;
+    font-size: 48px !important;
 }
 </style>
 """, unsafe_allow_html=True)
