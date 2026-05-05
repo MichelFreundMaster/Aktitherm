@@ -139,13 +139,12 @@ result = Image.fromarray(img_np)
 # -----------------------
 draw = ImageDraw.Draw(result)
 
-try:
-    font = ImageFont.truetype("arial.ttf", 150)
-    font_big = ImageFont.truetype("arial.ttf", 200)
-except:
-    font = ImageFont.load_default()
-    font_big = font
+import os
 
+font_path = os.path.join(os.path.dirname(__file__), "DejaVuSans.ttf")
+
+font = ImageFont.truetype(font_path, int(40 * scale_factor))
+font_big = ImageFont.truetype(font_path, int(80 * scale_factor))
 # -----------------------
 # TIEFENSKALA
 # -----------------------
