@@ -143,8 +143,8 @@ import os
 
 font_path = os.path.join(os.path.dirname(__file__), "DejaVuSans.ttf")
 
-font = ImageFont.truetype(font_path, int(40 * scale_factor))
-font_big = ImageFont.truetype(font_path, int(80 * scale_factor))
+font = ImageFont.truetype(font_path, int(20 * scale_factor))
+font_big = ImageFont.truetype(font_path, int(40 * scale_factor))
 # -----------------------
 # TIEFENSKALA
 # -----------------------
