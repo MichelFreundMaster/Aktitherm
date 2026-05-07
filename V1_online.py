@@ -66,12 +66,23 @@ z_max = max(z)
 # -----------------------
 mask = dT >= dT_min
 
-if np.any(mask):
-    z_start = z[mask].min()
-    z_ende  = z[mask].max()
-else:
-    z_start = None
-    z_ende  = None
+active_ranges = []
+
+in_range = False
+
+for i in range(len(z)):
+    if mask[i] and not in_range:
+        start = z[i]
+        in_range = True
+
+    elif not mask[i] and in_range:
+        end = z[i-1]
+        active_ranges.append((start, end))
+        in_range = False
+
+# falls Bereich bis zum Ende geht
+if in_range:
+    active_ranges.append((start, z[-1]))
 
 # -----------------------
 # BILD LADEN + UPSCALE
@@ -195,7 +206,7 @@ draw.text((x_cb, y_cb - 60), "ΔT [K]", fill="black", font=font)
 # -----------------------
 # AKTIVER BEREICH
 # -----------------------
-if z_start is not None:
+for i, (z_start, z_ende) in enumerate(active_ranges):
 
     y_start = y1 + (z_start - z_min) / (z_max - z_min) * (y2 - y1)
     y_ende  = y1 + (z_ende  - z_min) / (z_max - z_min) * (y2 - y1)
@@ -246,9 +257,8 @@ for y in range(int(y_start - (x2_inner - x1_inner)), int(y_ende), spacing):
     result = Image.alpha_composite(result.convert("RGBA"), overlay)
     draw = ImageDraw.Draw(result)
 
-    # Beschriftung
-   # Beschriftung
-text = "aktiver Bereich"
+# Beschriftung
+text = f"aktiver Bereich {i+1}"
 
 # Textgröße berechnen
 bbox = font_big.getbbox(text)
