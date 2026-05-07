@@ -261,7 +261,7 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
     text_width = bbox[2] - bbox[0]
     text_height = bbox[3] - bbox[1]
 
-    pad = 10
+    pad = 40
 
     txt_img = Image.new("RGBA", (text_width + pad, text_height + pad), (0,0,0,0))
     txt_draw = ImageDraw.Draw(txt_img)
