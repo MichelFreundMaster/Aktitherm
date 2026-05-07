@@ -149,7 +149,7 @@ import os
 font_path = os.path.join(os.path.dirname(__file__), "DejaVuSans.ttf")
 
 font = ImageFont.truetype(font_path, int(20 * scale_factor))
-font_big = ImageFont.truetype(font_path, int(40 * scale_factor))
+font_big = ImageFont.truetype(font_path, int(20 * scale_factor))
 # -----------------------
 # TIEFENSKALA
 # -----------------------
@@ -208,90 +208,80 @@ draw.text((x_cb, y_cb - 60), "ΔT [K]", fill="black", font=font)
 # -----------------------
 for i, (z_start, z_ende) in enumerate(active_ranges):
 
+    # ---- Umrechnung in Pixel ----
     y_start = y1 + (z_start - z_min) / (z_max - z_min) * (y2 - y1)
     y_ende  = y1 + (z_ende  - z_min) / (z_max - z_min) * (y2 - y1)
 
-    # Linien
+    # ---- Linien ----
     draw.line((x1_inner, y_start, x2_inner, y_start), fill="black", width=4)
-    draw.line((x1_inner, y_ende, x2_inner, y_ende), fill="black", width=4)
+    draw.line((x1_inner, y_ende,  x2_inner, y_ende),  fill="black", width=4)
 
-   # -----------------------
-# SCHRAFFUR (diagonal, sauber begrenzt)
-# -----------------------
+    # ---- SCHRAFFUR ----
+    spacing = 20
+    color = (0, 0, 0, 255)
 
-spacing = 20
-color = (0, 0, 0, 255)
+    overlay = Image.new("RGBA", result.size, (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
 
-overlay = Image.new("RGBA", result.size, (0, 0, 0, 0))
-overlay_draw = ImageDraw.Draw(overlay)
+    dx = x2_inner - x1_inner
 
-dx = x2_inner - x1_inner
+    for y in range(int(y_start - dx), int(y_ende), spacing):
 
-for y in range(int(y_start - (x2_inner - x1_inner)), int(y_ende), spacing):
+        x0 = x1_inner
+        y0 = y
 
-    x0 = x1_inner
-    y0 = y
+        x1_line = x2_inner
+        y1_line = y + dx
 
-    x1_line = x2_inner
-    y1_line = y + dx
+        # clipping unten
+        if y1_line > y_ende:
+            diff = y1_line - y_ende
+            x1_line -= diff
+            y1_line = y_ende
 
-    # --- unten clippen ---
-    if y1_line > y_ende:
-        diff = y1_line - y_ende
-        x1_line -= diff
-        y1_line = y_ende
+        # clipping oben
+        if y0 < y_start:
+            diff = y_start - y0
+            x0 += diff
+            y0 = y_start
 
-    # --- oben clippen ---
-    if y0 < y_start:
-        diff = y_start - y0
-        x0 += diff
-        y0 = y_start
+        overlay_draw.line(
+            [(x0, y0), (x1_line, y1_line)],
+            fill=color,
+            width=1
+        )
 
-    overlay_draw.line(
-        [(x0, y0), (x1_line, y1_line)],
-        fill=color,
-        width=1
-    )
-
-    # Overlay anwenden
     result = Image.alpha_composite(result.convert("RGBA"), overlay)
     draw = ImageDraw.Draw(result)
 
-# Beschriftung
-text = f"aktiver Bereich {i+1}"
+    # ---- BESCHRIFTUNG ----
+    text = f"aktiver Bereich {i+1}"
 
-# Textgröße berechnen
-bbox = font_big.getbbox(text)
-text_width = bbox[2] - bbox[0]
-text_height = bbox[3] - bbox[1]
+    bbox = font_big.getbbox(text)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
 
-# Padding
-pad = 20
+    pad = 10
 
-# dynamisches Bild
-txt_img = Image.new("RGBA", (text_width + pad, text_height + pad), (0,0,0,0))
-txt_draw = ImageDraw.Draw(txt_img)
+    txt_img = Image.new("RGBA", (text_width + pad, text_height + pad), (0,0,0,0))
+    txt_draw = ImageDraw.Draw(txt_img)
 
-# Text rein
-txt_draw.text((pad//2, pad//2), text, fill="black", font=font_big)
+    txt_draw.text((pad//2, pad//2), text, fill="black", font=font_big)
 
-# drehen
-txt_img = txt_img.rotate(90, expand=True)
+    txt_img = txt_img.rotate(90, expand=True)
 
-# Position exakt mittig zwischen Linien
-y_center = (y_start + y_ende) / 2
+    y_center = (y_start + y_ende) / 2
 
-# Position leicht innerhalb der Sonde
-x_text = x2_inner - 100
+    x_text = x2_inner - 60
 
-result.paste(
-    txt_img,
-    (
-        int(x_text - txt_img.width / 2),
-        int(y_center - txt_img.height / 2)
-    ),
-    txt_img
-)
+    result.paste(
+        txt_img,
+        (
+            int(x_text - txt_img.width / 2),
+            int(y_center - txt_img.height / 2)
+        ),
+        txt_img
+    )
 # -----------------------
 # SPEICHERN
 # -----------------------
