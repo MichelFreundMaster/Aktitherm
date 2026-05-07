@@ -247,28 +247,41 @@ for y in range(int(y_start - (x2_inner - x1_inner)), int(y_ende), spacing):
     draw = ImageDraw.Draw(result)
 
     # Beschriftung
-    text = "aktiver Bereich"
+   # Beschriftung
+text = "aktiver Bereich"
 
-    txt_img = Image.new("RGBA", (500, 100), (0,0,0,0))
-    txt_draw = ImageDraw.Draw(txt_img)
-    txt_draw.text((0, 0), text, fill="black", font=font_big)
+# Textgröße berechnen
+bbox = font_big.getbbox(text)
+text_width = bbox[2] - bbox[0]
+text_height = bbox[3] - bbox[1]
 
-    txt_img = txt_img.rotate(90, expand=True)
+# Padding
+pad = 20
 
-    y_center = (y_start + y_ende) / 2
+# dynamisches Bild
+txt_img = Image.new("RGBA", (text_width + pad, text_height + pad), (0,0,0,0))
+txt_draw = ImageDraw.Draw(txt_img)
 
-    x_text = x2 - 70
-    y_offset = -60
+# Text rein
+txt_draw.text((pad//2, pad//2), text, fill="black", font=font_big)
 
-    result.paste(
-        txt_img,
-        (
-            int(x_text - txt_img.width / 2),
-            int(y_center - txt_img.height / 2 + y_offset)
-        ),
-        txt_img
-    )
+# drehen
+txt_img = txt_img.rotate(90, expand=True)
 
+# Position exakt mittig zwischen Linien
+y_center = (y_start + y_ende) / 2
+
+# Position leicht innerhalb der Sonde
+x_text = x2_inner - 60
+
+result.paste(
+    txt_img,
+    (
+        int(x_text - txt_img.width / 2),
+        int(y_center - txt_img.height / 2)
+    ),
+    txt_img
+)
 # -----------------------
 # SPEICHERN
 # -----------------------
