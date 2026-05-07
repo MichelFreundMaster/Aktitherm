@@ -272,7 +272,7 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
 
     y_center = (y_start + y_ende) / 2
 
-    x_text = x2_inner - 60
+    x_text = x2_inner - 100
 
     result.paste(
         txt_img,
