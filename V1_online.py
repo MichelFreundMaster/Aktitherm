@@ -58,6 +58,15 @@ x1, y1 = 371, 271
 x2, y2 = 475, 1241
 
 # -----------------------
+# VORLAUF-KOORDINATEN
+# -----------------------
+x1_vl = 456
+y1_vl = 326
+
+x2_vl = 468
+y2_vl = 1266
+
+# -----------------------
 # DATEN EINLESEN
 # -----------------------
 if uploaded_file is not None:
@@ -113,7 +122,10 @@ x1 *= scale_factor
 x2 *= scale_factor
 y1 *= scale_factor
 y2 *= scale_factor
-
+x1_vl *= scale_factor
+x2_vl *= scale_factor
+y1_vl *= scale_factor
+y2_vl *= scale_factor
 # -----------------------
 # INNERE SONDE
 # -----------------------
@@ -133,73 +145,90 @@ y2_adj = y2 - bottom_offset
 
 height = y2_adj - y1_adj
 # -----------------------
-# BREITE WÄRMEFELD (neu)
+# WÄRMEFELD VOM VORLAUF
 # -----------------------
 
-min_width = int(220 * scale_factor)   # garantiert sichtbar
-max_extra = int(300 * scale_factor)   # zusätzlicher Bereich
+top_offset = 10
+bottom_offset = 10
 
-# λ normalisieren (0 → 1)
-lambda_min = 1.0
-lambda_max = 2.5
+y1_adj = y1 + top_offset
+y2_adj = y2 - bottom_offset
 
-lambda_norm = (lambda_boden - lambda_min) / (lambda_max - lambda_min)
-
-width_heat = int(min_width + lambda_norm * max_extra)
+height = y2_adj - y1_adj
 
 # -----------------------
-# INTERPOLATION ΔT AUF PIXELHÖHE
+# BREITE JE NACH BODEN
+# -----------------------
+boden_breiten = {
+    "Ton": 120,
+    "Lehm": 180,
+    "Kies": 260,
+    "Grundwasser": 340
+}
+
+heat_radius = int(boden_breiten[boden] * scale_factor)
+
+# -----------------------
+# INTERPOLATION
 # -----------------------
 z_new = np.linspace(z_min, z_max, height)
 dT_interp = np.interp(z_new, z, dT)
 
 # -----------------------
-# 2D Wärmefeld mit radialem Abfall
+# LEERES WÄRMEBILD
 # -----------------------
+heatmap = np.zeros((height, img_np.shape[1]))
 
-x_vals = np.linspace(-1, 1, width_heat)
+# Mittelpunkt Vorlauf
+x_center_vl = int((x1_vl + x2_vl) / 2)
 
-heatmap = np.zeros((height, width_heat))
-
-k = 2.5  # Abklingfaktor (feinjustieren)
+# radialer Verlauf
+k = 3.0
 
 for i in range(height):
-    for j in range(width_heat):
-        shift = -0.25   # leicht nach links (Vorlauf)
 
-        r = abs(x_vals[j] - shift)
-        heatmap[i, j] = dT_interp[i] * np.exp(-k * r / lambda_boden)
+    for x in range(
+        max(0, x_center_vl - heat_radius),
+        min(img_np.shape[1], x_center_vl + heat_radius)
+    ):
 
+        r = abs(x - x_center_vl) / heat_radius
+
+        value = dT_interp[i] * np.exp(-k * r)
+
+        heatmap[i, x] = value
+
+# -----------------------
+# FARBEN
+# -----------------------
 vmin = 0
 vmax = 20
 
 norm = np.clip((heatmap - vmin) / (vmax - vmin), 0, 1)
+
 gamma = 0.7
 norm = norm**gamma
 
 cmap = plt.get_cmap("turbo")
+
 heat_rgba = (cmap(norm) * 255).astype(np.uint8)
 
 alpha = 180
 heat_rgba[..., 3] = alpha
-# -----------------------
-# POSITION WÄRMEFELD
-# -----------------------
-x_center = (x1_inner + x2_inner) // 2
 
-x_left = int(x_center - width_heat // 2)
-x_right = int(x_center + width_heat // 2)
-
-# Sicherheits-Clamp (verhindert Fehler am Rand)
-x_left = max(0, x_left)
-x_right = min(img_np.shape[1], x_right)
 # -----------------------
-# OVERLAY EINSETZEN
+# OVERLAY
 # -----------------------
-img_np[y1_adj:y2_adj, x_left:x_right] = (
-    heat_rgba * (alpha/255) + img_np[y1_adj:y2_adj, x_left:x_right] * (1 - alpha/255)
+img_np[y1_adj:y2_adj, :] = (
+    heat_rgba * (alpha/255)
+    + img_np[y1_adj:y2_adj, :] * (1 - alpha/255)
 ).astype(np.uint8)
+
 result = Image.fromarray(img_np)
+
+# Grenzen für Schraffur
+x_left = x_center_vl - heat_radius
+x_right = x_center_vl + heat_radius
 
 # -----------------------
 # ZEICHNEN
