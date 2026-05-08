@@ -125,16 +125,27 @@ x2_inner = x2 - offset
 # WÄRMEBILD ERZEUGEN
 # -----------------------
 height = y2 - y1
-# -----------------------
-# BREITE WÄRMEFELD (abhängig von Boden)
-# -----------------------
-base_width = 60  # Grundbreite
+top_offset = 10
+bottom_offset = 10
 
-width_heat = int(base_width * lambda_boden)   # skaliert mit λ
-width  = x2_inner - x1_inner
+y1_adj = y1 + top_offset
+y2_adj = y2 - bottom_offset
 
-z_new = np.linspace(0, z_max, height)
-dT_interp = np.interp(z_new, z, dT)
+height = y2_adj - y1_adj
+# -----------------------
+# BREITE WÄRMEFELD (neu)
+# -----------------------
+
+min_width = int(220 * scale_factor)   # garantiert sichtbar
+max_extra = int(300 * scale_factor)   # zusätzlicher Bereich
+
+# λ normalisieren (0 → 1)
+lambda_min = 1.0
+lambda_max = 2.5
+
+lambda_norm = (lambda_boden - lambda_min) / (lambda_max - lambda_min)
+
+width_heat = int(min_width + lambda_norm * max_extra)
 
 # -----------------------
 # 2D Wärmefeld mit radialem Abfall
@@ -179,8 +190,8 @@ x_right = min(img_np.shape[1], x_right)
 # -----------------------
 # OVERLAY EINSETZEN
 # -----------------------
-img_np[y1:y2, x_left:x_right] = (
-    heat_rgba * (alpha/255) + img_np[y1:y2, x_left:x_right] * (1 - alpha/255)
+img_np[y1_adj:y2_adj, x_left:x_right] = (
+    heat_rgba * (alpha/255) + img_np[y1_adj:y2_adj, x_left:x_right] * (1 - alpha/255)
 ).astype(np.uint8)
 result = Image.fromarray(img_np)
 
