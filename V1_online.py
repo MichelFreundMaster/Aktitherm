@@ -21,6 +21,21 @@ uploaded_file = st.file_uploader("Excel-Datei hochladen", type=["xlsx"])
 
 dT_min = st.slider("ΔT_min [K]", 1, 6, 5, step=1)
 T_fluid = st.slider("Fluidtemperatur [°C]", 15, 40, 15, step=5)
+boden = st.selectbox(
+    "Untergrund auswählen",
+    ["Ton", "Lehm", "Kies", "Grundwasser"]
+)
+# -----------------------
+# BODENPARAMETER
+# -----------------------
+boden_dict = {
+    "Ton": ("Ton.png", 1.0),
+    "Lehm": ("Lehm.png", 1.3),
+    "Kies": ("Kies.png", 2.0),
+    "Grundwasser": ("Grundwasser.png", 2.5),
+}
+
+img_file, lambda_boden = boden_dict[boden]
 
 import pandas as pd
 import numpy as np
@@ -33,7 +48,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 
 base_dir = os.path.dirname(__file__)
-img_path = os.path.join(base_dir, "Rohdarstellung_GRT.png")
+img_path = os.path.join(base_dir, img_file)
 excel_path = "Tiefenprofil.xlsx"
 
 # -----------------------
@@ -52,7 +67,7 @@ else:
     st.stop()
 z = df.iloc[:, 0].values
 T_ground = df.iloc[:, 1].values
-dT = T_fluid - T_ground
+dT = (T_fluid - T_ground) / lambda_boden
 
 if np.max(dT) < dT_min:
     st.error("Temperaturdifferenz zu klein für einen Temperaturübergang")
@@ -110,12 +125,31 @@ x2_inner = x2 - offset
 # WÄRMEBILD ERZEUGEN
 # -----------------------
 height = y2 - y1
+# -----------------------
+# BREITE WÄRMEFELD (abhängig von Boden)
+# -----------------------
+base_width = 60  # Grundbreite
+
+width_heat = int(base_width * lambda_boden)   # skaliert mit λ
 width  = x2_inner - x1_inner
 
 z_new = np.linspace(0, z_max, height)
 dT_interp = np.interp(z_new, z, dT)
 
-heatmap = np.tile(dT_interp[:, np.newaxis], (1, width))
+# -----------------------
+# 2D Wärmefeld mit radialem Abfall
+# -----------------------
+
+x_vals = np.linspace(-1, 1, width_heat)
+
+heatmap = np.zeros((height, width_heat))
+
+k = 2.5  # Abklingfaktor (feinjustieren)
+
+for i in range(height):
+    for j in range(width_heat):
+        r = abs(x_vals[j])
+        heatmap[i, j] = dT_interp[i] * np.exp(-k * r / lambda_boden)
 
 vmin = 0
 vmax = 20
@@ -129,14 +163,23 @@ heat_rgba = (cmap(norm) * 255).astype(np.uint8)
 
 alpha = 180
 heat_rgba[..., 3] = alpha
+# -----------------------
+# POSITION WÄRMEFELD
+# -----------------------
+x_center = (x1_inner + x2_inner) // 2
 
+x_left = int(x_center - width_heat // 2)
+x_right = int(x_center + width_heat // 2)
+
+# Sicherheits-Clamp (verhindert Fehler am Rand)
+x_left = max(0, x_left)
+x_right = min(img_np.shape[1], x_right)
 # -----------------------
 # OVERLAY EINSETZEN
 # -----------------------
-img_np[y1:y2, x1_inner:x2_inner] = (
-    heat_rgba * (alpha/255) + img_np[y1:y2, x1_inner:x2_inner] * (1 - alpha/255)
+img_np[y1:y2, x_left:x_right] = (
+    heat_rgba * (alpha/255) + img_np[y1:y2, x_left:x_right] * (1 - alpha/255)
 ).astype(np.uint8)
-
 result = Image.fromarray(img_np)
 
 # -----------------------
