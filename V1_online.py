@@ -148,7 +148,9 @@ k = 2.5  # Abklingfaktor (feinjustieren)
 
 for i in range(height):
     for j in range(width_heat):
-        r = abs(x_vals[j])
+        shift = -0.25   # leicht nach links (Vorlauf)
+
+        r = abs(x_vals[j] - shift)
         heatmap[i, j] = dT_interp[i] * np.exp(-k * r / lambda_boden)
 
 vmin = 0
@@ -256,8 +258,8 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
     y_ende  = y1 + (z_ende  - z_min) / (z_max - z_min) * (y2 - y1)
 
     # ---- Linien ----
-    draw.line((x1_inner, y_start, x2_inner, y_start), fill="black", width=4)
-    draw.line((x1_inner, y_ende,  x2_inner, y_ende),  fill="black", width=4)
+    draw.line((x_left, y_start, x_right, y_start), fill="black", width=4)
+    draw.line((x_left, y_ende,  x_right, y_ende),  fill="black", width=4)
 
     # ---- SCHRAFFUR ----
     spacing = 20
@@ -266,14 +268,14 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
     overlay = Image.new("RGBA", result.size, (0, 0, 0, 0))
     overlay_draw = ImageDraw.Draw(overlay)
 
-    dx = x2_inner - x1_inner
+    dx = x_right - x_left
 
     for y in range(int(y_start - dx), int(y_ende), spacing):
 
-        x0 = x1_inner
+        x0 = x_left
         y0 = y
 
-        x1_line = x2_inner
+        x1_line = x_right
         y1_line = y + dx
 
         # clipping unten
@@ -315,7 +317,7 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
 
     y_center = (y_start + y_ende) / 2
 
-    x_text = x2_inner - 100
+    x_text = x_right - 100
 
     result.paste(
         txt_img,
