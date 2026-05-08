@@ -148,6 +148,12 @@ lambda_norm = (lambda_boden - lambda_min) / (lambda_max - lambda_min)
 width_heat = int(min_width + lambda_norm * max_extra)
 
 # -----------------------
+# INTERPOLATION ΔT AUF PIXELHÖHE
+# -----------------------
+z_new = np.linspace(z_min, z_max, height)
+dT_interp = np.interp(z_new, z, dT)
+
+# -----------------------
 # 2D Wärmefeld mit radialem Abfall
 # -----------------------
 
@@ -265,9 +271,8 @@ draw.text((x_cb, y_cb - 60), "ΔT [K]", fill="black", font=font)
 for i, (z_start, z_ende) in enumerate(active_ranges):
 
     # ---- Umrechnung in Pixel ----
-    y_start = y1 + (z_start - z_min) / (z_max - z_min) * (y2 - y1)
-    y_ende  = y1 + (z_ende  - z_min) / (z_max - z_min) * (y2 - y1)
-
+    y_start = y1_adj + (z_start - z_min) / (z_max - z_min) * (y2_adj - y1_adj)
+    y_ende  = y1_adj + (z_ende  - z_min) / (z_max - z_min) * (y2_adj - y1_adj)
     # ---- Linien ----
     draw.line((x_left, y_start, x_right, y_start), fill="black", width=4)
     draw.line((x_left, y_ende,  x_right, y_ende),  fill="black", width=4)
