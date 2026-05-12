@@ -233,25 +233,32 @@ heat_radius = int(
 # Abklingkonstante
 k = 3.0
 
-# Konstante Temperatur im Bentonit
+# Temperatur im äußeren Bentonit konstant
 dT_bentonit = np.max(dT_interp)
 
 # =====================================================
-# WÄRME IM ÄUSSEREN BENTONIT
+# WÄRMEFELD IM ÄUSSEREN BENTONIT
 # =====================================================
 
 for i in range(height):
 
     y_global = y1_adj + i
 
-    if y1_outer <= y_global <= y2_outer:
+    # -------------------------------------------------
+    # VERTIKALER BEREICH
+    # -------------------------------------------------
+
+    if y1_outer <= y_global <= y2_outer + heat_radius:
 
         for x in range(
             max(0, x1_outer - heat_radius),
             min(img_np.shape[1], x2_outer + heat_radius)
         ):
 
-            # Inneren Bereich ausschneiden
+            # -----------------------------------------
+            # INNEREN BEREICH AUSSCHNEIDEN
+            # -----------------------------------------
+
             if (
                 x1_inner_cut <= x <= x2_inner_cut
                 and
@@ -259,68 +266,53 @@ for i in range(height):
             ):
                 continue
 
-            # Abstand zur äußeren Bentonitkante
-            if x < x1_outer:
-                dist = x1_outer - x
+            # -----------------------------------------
+            # OBERHALB DES SONDENFUSSES
+            # -> vertikale Ausbreitung
+            # -----------------------------------------
 
-            elif x > x2_outer:
-                dist = x - x2_outer
+            if y_global <= y2_outer:
+
+                if x < x1_outer:
+                    dist = x1_outer - x
+
+                elif x > x2_outer:
+                    dist = x - x2_outer
+
+                else:
+                    dist = 0
+
+            # -----------------------------------------
+            # UNTERHALB DES SONDENFUSSES
+            # -> HALBRUNDE AUSBREITUNG
+            # -----------------------------------------
 
             else:
-                dist = 0
 
-            # Im Bentonit konstant
+                dx_circle = x - ((x1_outer + x2_outer) / 2)
+                dy_circle = y_global - y2_outer
+
+                dist = np.sqrt(
+                    dx_circle**2 + dy_circle**2
+                )
+
+            # -----------------------------------------
+            # TEMPERATURFELD
+            # -----------------------------------------
+
+            r_norm = dist / heat_radius
+
             if dist == 0:
 
                 value = dT_bentonit
 
-            # Im Boden exponentiell abfallend
             else:
 
                 value = dT_bentonit * np.exp(
-                    -k * dist / heat_radius
+                    -k * r_norm
                 )
 
             heatmap[i, x] = value
-
-# =====================================================
-# HALBRUNDE AUSBREITUNG UNTEN
-# =====================================================
-
-x_center = int((x1_outer + x2_outer) / 2)
-y_bottom = y2_inner_cut
-
-foot_radius = int(heat_radius * 0.9)
-
-for y in range(
-    int(max(y1_adj, y_bottom)),
-    int(min(img_np.shape[0], y_bottom + foot_radius))
-):
-
-    for x in range(
-        max(0, x_center - foot_radius),
-        min(img_np.shape[1], x_center + foot_radius)
-    ):
-
-        dx = x - x_center
-        dy = y - y_bottom
-
-        r = np.sqrt(dx**2 + dy**2)
-
-        if r <= foot_radius:
-
-            value = dT_bentonit * np.exp(
-                -k * r / foot_radius
-            )
-
-            heat_y = y - y1_adj
-
-            if 0 <= heat_y < height:
-
-                heatmap[int(heat_y), x] = max(
-                    heatmap[int(heat_y), x],
-                    value
-                )
 
 # =====================================================
 # FARBMAPPING
