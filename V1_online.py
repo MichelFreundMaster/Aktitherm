@@ -375,7 +375,7 @@ alpha_map = heat_rgba[..., 3:4] / 255.0
 
 img_np[y1_adj:y1_adj + height_total, :] = (
     heat_rgba[..., :4] * alpha_map
-    + img_np[y1_adj:y2_adj, :] * (1 - alpha_map)
+    + img_np[y1_adj:y1_adj + height_total, :] * (1 - alpha_map)
 ).astype(np.uint8)
 
 result = Image.fromarray(img_np)
