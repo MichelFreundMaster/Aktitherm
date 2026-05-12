@@ -255,11 +255,11 @@ x_scale = x1 - 80
 ticks = np.linspace(z_min, z_max, 6)
 
 for t in ticks:
-    y = y1 + (t - z_min) / (z_max - z_min) * (y2 - y1)
+    y = y1_adj + (t - z_min) / (z_max - z_min) * (y2_adj - y1_adj)
     draw.line((x_scale, y, x_scale + 15, y), fill="black", width=3)
     draw.text((x_scale - 90, y - 15), f"{int(t)}", fill="black", font=font)
 
-y_center_scale = (y1 + y2) / 2
+y_center_scale = (y1_adj + y2_adj) / 2
 
 draw.text(
     (x_scale - 300, int(y_center_scale - 20)),
@@ -271,11 +271,11 @@ draw.text(
 # -----------------------
 # FARBSKALA
 # -----------------------
-cb_total_height = y2 - y1
+cb_total_height = y2_adj - y1_adj
 cb_height = int(cb_total_height * 0.7)
 cb_width = 50
 
-y_cb = int(y1 + (cb_total_height - cb_height) / 2)
+y_cb = int(y1_adj + (cb_total_height - cb_height) / 2)
 
 cb = np.linspace(vmin, vmax, cb_height)
 cb_img = np.tile(cb[:, np.newaxis], (1, cb_width))
