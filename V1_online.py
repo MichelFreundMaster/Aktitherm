@@ -110,7 +110,7 @@ T_ground = df.iloc[:, 1].values
 # THERMISCHE DIFFERENZ
 # =====================================================
 
-dT = (T_fluid - T_ground) / lambda_boden
+dT = T_fluid - T_ground
 
 if np.max(dT) < dT_min:
     st.error(
