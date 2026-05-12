@@ -137,7 +137,7 @@ x2_inner = x2 - offset
 # WÄRMEBILD ERZEUGEN
 # -----------------------
 height = y2 - y1
-top_offset = 150
+top_offset = 100
 bottom_offset = 10
 
 y1_adj = y1 + top_offset
