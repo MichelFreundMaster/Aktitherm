@@ -144,17 +144,6 @@ y1_adj = y1 + top_offset
 y2_adj = y2 - bottom_offset
 
 height = y2_adj - y1_adj
-# -----------------------
-# WÄRMEFELD VOM VORLAUF
-# -----------------------
-
-top_offset = 10
-bottom_offset = 10
-
-y1_adj = y1 + top_offset
-y2_adj = y2 - bottom_offset
-
-height = y2_adj - y1_adj
 
 # -----------------------
 # BREITE JE NACH BODEN
