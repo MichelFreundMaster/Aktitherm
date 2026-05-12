@@ -332,38 +332,79 @@ for i in range(height_total):
 
             heatmap[i, x] = value
 # =====================================================
-# ZUSÄTZLICHER HALBKREIS UNTEN
+# BREITER WÄRMEBEREICH AM SONDENFUSS
 # =====================================================
 
-x_center_circle = int((x1_outer + x2_outer) / 2)
+# tatsächliche Breite des U-Bogens
+x_left_bottom = x1_outer
+x_right_bottom = x2_outer
 
-y_center_circle = y2_outer - y1_adj
+# Mittelpunkt unten
+x_center_bottom = int((x_left_bottom + x_right_bottom) / 2)
 
-circle_radius = (x2_outer - x1_outer) // 2 + heat_radius
+# Höhe Sondenfuß
+y_bottom = y2_outer
+
+# zusätzliche Ausbreitung
+bottom_radius = heat_radius
 
 for y in range(height_total):
 
-    for x in range(
-        max(0, x_center_circle - circle_radius),
-        min(img_np.shape[1], x_center_circle + circle_radius)
-    ):
+    y_global = y1_adj + y
 
-        dx = x - x_center_circle
-        dy = y - y_center_circle
+    # nur unterhalb des Sondenfußes
+    if y_global >= y_bottom:
 
-        r = np.sqrt(dx**2 + dy**2)
+        for x in range(
+            max(0, x_left_bottom - bottom_radius),
+            min(img_np.shape[1], x_right_bottom + bottom_radius)
+        ):
 
-        # nur untere Hälfte
-        if r <= circle_radius and y >= y_center_circle:
+            # -------------------------------------------------
+            # INNERHALB DER U-BREITE
+            # -> volle Temperatur
+            # -------------------------------------------------
+
+            if x_left_bottom <= x <= x_right_bottom:
+
+                dist = y_global - y_bottom
+
+            # -------------------------------------------------
+            # LINKS AUSSERHALB
+            # -------------------------------------------------
+
+            elif x < x_left_bottom:
+
+                dx = x_left_bottom - x
+                dy = y_global - y_bottom
+
+                dist = np.sqrt(dx**2 + dy**2)
+
+            # -------------------------------------------------
+            # RECHTS AUSSERHALB
+            # -------------------------------------------------
+
+            else:
+
+                dx = x - x_right_bottom
+                dy = y_global - y_bottom
+
+                dist = np.sqrt(dx**2 + dy**2)
+
+            # -------------------------------------------------
+            # TEMPERATUR
+            # -------------------------------------------------
+
+            r_norm = dist / bottom_radius
 
             value = dT_bentonit * np.exp(
-                -2.2 * r / circle_radius
+                -2.2 * r_norm
             )
 
             heatmap[y, x] = max(
                 heatmap[y, x],
                 value
-            )                     
+            )
 # =====================================================
 # FARBMAPPING
 # =====================================================
