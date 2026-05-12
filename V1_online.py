@@ -339,7 +339,7 @@ x_center_circle = int((x1_outer + x2_outer) / 2)
 
 y_center_circle = y2_outer - y1_adj
 
-circle_radius = x_right - x_center_circle
+circle_radius = (x2_outer - x1_outer) // 2 + heat_radius
 
 for y in range(height_total):
 
