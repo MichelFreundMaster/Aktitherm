@@ -288,13 +288,13 @@ for i in range(height):
 # =====================================================
 
 x_center = int((x1_outer + x2_outer) / 2)
-y_bottom = y2_outer
+y_bottom = y2_outer - y1_adj
 
 foot_radius = int(heat_radius * 0.9)
 
 for y in range(
-    max(0, y_bottom),
-    min(img_np.shape[0], y_bottom + foot_radius)
+    int(max(0, y_bottom)),
+    int(min(height, y_bottom + foot_radius))
 ):
 
     for x in range(
