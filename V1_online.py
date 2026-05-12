@@ -198,7 +198,14 @@ height = y2_adj - y1_adj
 # INTERPOLATION
 # =====================================================
 
-z_new = np.linspace(z_min, z_max, height)
+# ursprüngliche Höhe der Sonde
+height_base = y2_adj - y1_adj
+
+# zusätzliche Höhe für Halbkreis
+height = height_base + heat_radius
+
+# Interpolation nur entlang der Sonde
+z_new = np.linspace(z_min, z_max, height_base)
 
 dT_interp = np.interp(
     z_new,
@@ -315,7 +322,8 @@ for i in range(height):
                 )
 
             heatmap[i, x] = value
-
+            if i >= len(dT_interp):
+                continue
 # =====================================================
 # FARBMAPPING
 # =====================================================
