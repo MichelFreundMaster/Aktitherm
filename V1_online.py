@@ -317,10 +317,10 @@ for y in range(
 
             if 0 <= heat_y < height:
 
-            heatmap[int(heat_y), x] = max(
-            heatmap[int(heat_y), x],
-            value
-            )
+                heatmap[int(heat_y), x] = max(
+                    heatmap[int(heat_y), x],
+                    value
+                )
 
 # =====================================================
 # FARBMAPPING
