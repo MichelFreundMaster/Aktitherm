@@ -559,7 +559,7 @@ cb_rgba = (
 
 cb_pil = Image.fromarray(cb_rgba)
 
-x_cb = x2 + 280
+x_cb = x2 + 500
 
 result.paste(
     cb_pil,
