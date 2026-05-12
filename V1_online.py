@@ -192,7 +192,7 @@ bottom_offset = 10
 y1_adj = y1 + top_offset
 y2_adj = y2 - bottom_offset
 
-height = y2_adj - y1_adj
+height = (y2_adj - y1_adj) + heat_radius
 
 # =====================================================
 # INTERPOLATION
@@ -352,7 +352,7 @@ heat_rgba[..., 3] = np.where(
 
 alpha_map = heat_rgba[..., 3:4] / 255.0
 
-img_np[y1_adj:y2_adj, :] = (
+img_np[y1_adj:y1_adj + height, :] = (
     heat_rgba[..., :4] * alpha_map
     + img_np[y1_adj:y2_adj, :] * (1 - alpha_map)
 ).astype(np.uint8)
@@ -428,7 +428,7 @@ draw.text(
 # FARBSKALA
 # =====================================================
 
-cb_total_height = y2_adj - y1_adj
+cb_total_height = height
 
 cb_height = int(cb_total_height * 0.7)
 cb_width = 50
