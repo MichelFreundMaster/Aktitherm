@@ -313,12 +313,14 @@ for y in range(
                 -k * r / foot_radius
             )
 
-            if (y - y1_adj) < height:
+            heat_y = y - y1_adj
 
-                heatmap[y - y1_adj, x] = max(
-                    heatmap[y - y1_adj, x],
-                    value
-                )
+            if 0 <= heat_y < height:
+
+            heatmap[int(heat_y), x] = max(
+            heatmap[int(heat_y), x],
+            value
+            )
 
 # =====================================================
 # FARBMAPPING
