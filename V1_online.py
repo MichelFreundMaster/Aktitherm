@@ -218,7 +218,7 @@ dT_interp = np.interp(
 # =====================================================
 
 heatmap = np.zeros(
-    (height_total, img_np.shape[1]),
+    (height, img_np.shape[1]),
     dtype=np.float32
 )
 
@@ -239,6 +239,15 @@ heat_radius = int(
 # zusätzlicher Platz für Halbkreis
 height_total = height + heat_radius
 
+# Heatmap jetzt auf neue Höhe erweitern
+new_heatmap = np.zeros(
+    (height_total, img_np.shape[1]),
+    dtype=np.float32
+)
+
+new_heatmap[:height, :] = heatmap
+
+heatmap = new_heatmap
 # Abklingkonstante
 k = 3.0
 
