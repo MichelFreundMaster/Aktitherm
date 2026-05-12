@@ -302,7 +302,7 @@ for i in range(height_total):
 
             # -----------------------------------------
             # UNTERHALB DES SONDENFUSSES
-            # -> HALBRUNDE AUSBREITUNG
+            # -> radial / halbrund
             # -----------------------------------------
 
             else:
@@ -330,11 +330,40 @@ for i in range(height_total):
                     -k * r_norm
                 )
 
-            if i >= len(dT_interp):
-                continue
-
             heatmap[i, x] = value
-            
+# =====================================================
+# ZUSÄTZLICHER HALBKREIS UNTEN
+# =====================================================
+
+x_center_circle = int((x1_outer + x2_outer) / 2)
+
+y_center_circle = y2_outer - y1_adj
+
+circle_radius = int(heat_radius * 1.1)
+
+for y in range(height_total):
+
+    for x in range(
+        max(0, x_center_circle - circle_radius),
+        min(img_np.shape[1], x_center_circle + circle_radius)
+    ):
+
+        dx = x - x_center_circle
+        dy = y - y_center_circle
+
+        r = np.sqrt(dx**2 + dy**2)
+
+        # nur untere Hälfte
+        if r <= circle_radius and y >= y_center_circle:
+
+            value = dT_bentonit * np.exp(
+                -2.2 * r / circle_radius
+            )
+
+            heatmap[y, x] = max(
+                heatmap[y, x],
+                value
+            )                     
 # =====================================================
 # FARBMAPPING
 # =====================================================
