@@ -339,7 +339,7 @@ x_center_circle = int((x1_outer + x2_outer) / 2)
 
 y_center_circle = y2_outer - y1_adj
 
-circle_radius = int(heat_radius * 1.1)
+circle_radius = x_right - x_center_circle
 
 for y in range(height_total):
 
@@ -390,12 +390,13 @@ heat_rgba = (
 # TRANSPARENZ
 # =====================================================
 
+alpha_strength = (norm * 220).astype(np.uint8)
+
 heat_rgba[..., 3] = np.where(
-    heatmap > 0.05,
-    180,
+    heatmap > 0.03,
+    alpha_strength,
     0
 )
-
 # =====================================================
 # OVERLAY
 # =====================================================
