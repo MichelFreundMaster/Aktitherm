@@ -192,7 +192,7 @@ bottom_offset = 10
 y1_adj = y1 + top_offset
 y2_adj = y2 - bottom_offset
 
-height = (y2_adj - y1_adj) + heat_radius
+height = y2_adj - y1_adj
 
 # =====================================================
 # INTERPOLATION
@@ -229,6 +229,8 @@ boden_breiten = {
 heat_radius = int(
     boden_breiten[boden] * scale_factor
 )
+# zusätzlicher Platz für Halbkreis
+height = height + heat_radius
 
 # Abklingkonstante
 k = 3.0
