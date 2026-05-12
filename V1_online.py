@@ -213,8 +213,12 @@ cmap = plt.get_cmap("turbo")
 
 heat_rgba = (cmap(norm) * 255).astype(np.uint8)
 
-alpha = 180
-heat_rgba[..., 3] = alpha
+# Transparenz nur dort, wo Wärme vorhanden
+heat_rgba[..., 3] = np.where(
+    heatmap > 0.05,
+    180,
+    0
+)
 
 # -----------------------
 # OVERLAY
