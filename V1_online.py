@@ -202,7 +202,7 @@ height = y2_adj - y1_adj
 height_base = y2_adj - y1_adj
 
 # zusätzliche Höhe für Halbkreis
-height = height_base + heat_radius
+height = height_base
 
 # Interpolation nur entlang der Sonde
 z_new = np.linspace(z_min, z_max, height_base)
@@ -218,7 +218,7 @@ dT_interp = np.interp(
 # =====================================================
 
 heatmap = np.zeros(
-    (height, img_np.shape[1]),
+    (height_total, img_np.shape[1]),
     dtype=np.float32
 )
 
@@ -237,7 +237,7 @@ heat_radius = int(
     boden_breiten[boden] * scale_factor
 )
 # zusätzlicher Platz für Halbkreis
-height = height + heat_radius
+height_total = height + heat_radius
 
 # Abklingkonstante
 k = 3.0
@@ -249,7 +249,7 @@ dT_bentonit = np.max(dT_interp)
 # WÄRMEFELD IM ÄUSSEREN BENTONIT
 # =====================================================
 
-for i in range(height):
+for i in range(height_total):
 
     y_global = y1_adj + i
 
@@ -321,9 +321,11 @@ for i in range(height):
                     -k * r_norm
                 )
 
-            heatmap[i, x] = value
             if i >= len(dT_interp):
                 continue
+
+            heatmap[i, x] = value
+            
 # =====================================================
 # FARBMAPPING
 # =====================================================
@@ -362,7 +364,7 @@ heat_rgba[..., 3] = np.where(
 
 alpha_map = heat_rgba[..., 3:4] / 255.0
 
-img_np[y1_adj:y1_adj + height, :] = (
+img_np[y1_adj:y1_adj + height_total, :] = (
     heat_rgba[..., :4] * alpha_map
     + img_np[y1_adj:y2_adj, :] * (1 - alpha_map)
 ).astype(np.uint8)
@@ -438,7 +440,7 @@ draw.text(
 # FARBSKALA
 # =====================================================
 
-cb_total_height = height
+cb_total_height = height_total
 
 cb_height = int(cb_total_height * 0.7)
 cb_width = 50
