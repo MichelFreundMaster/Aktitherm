@@ -55,7 +55,7 @@ excel_path = "Tiefenprofil.xlsx"
 # KOORDINATEN SONDE
 # -----------------------
 x1, y1 = 371, 271
-x2, y2 = 475, 1241
+x2, y2 = 475, 1305
 
 # -----------------------
 # VORLAUF-KOORDINATEN
