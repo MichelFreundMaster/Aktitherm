@@ -403,9 +403,18 @@ heat_rgba[..., 3] = np.where(
 
 alpha_map = heat_rgba[..., 3:4] / 255.0
 
-img_np[y1_adj:y1_adj + height_total, :] = (
-    heat_rgba[..., :4] * alpha_map
-    + img_np[y1_adj:y1_adj + height_total, :] * (1 - alpha_map)
+y_end_overlay = min(
+    y1_adj + height_total,
+    img_np.shape[0]
+)
+
+overlay_height = y_end_overlay - y1_adj
+
+img_np[y1_adj:y_end_overlay, :] = (
+    heat_rgba[:overlay_height, :, :4]
+    * alpha_map[:overlay_height]
+    + img_np[y1_adj:y_end_overlay, :]
+    * (1 - alpha_map[:overlay_height])
 ).astype(np.uint8)
 
 result = Image.fromarray(img_np)
