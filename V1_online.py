@@ -70,17 +70,20 @@ boden_dict = {
 img_file, lambda_boden = boden_dict[boden]
 
 # =====================================================
-# SCHICHTEN HÜLLHORST
+# SCHICHTEN HÜLLHORST (Y-BASIERT)
 # =====================================================
 
 huellhorst_schichten = [
-    (0.0,   2.3,   1.2),
-    (2.3,  11.3,   1.8),
-    (11.3, 14.2,   2.0),
-    (14.2, 17.1,   1.0),
-    (17.1, 21.2,   1.3),
-    (21.2, 33.4,   1.1),
-    (33.4, 140.0,  1.4),
+
+    # y_start, y_end, lambda
+
+    (326,  416,  1.2),  # Auffüllung / Lehm
+    (416,  564,  1.8),  # Mittelsand tonig
+    (564,  671,  2.0),  # Feinsand
+    (671,  778,  1.0),  # Ton weich
+    (778,  883,  1.3),  # Tonstein verwittert
+    (883, 1065,  1.1),  # Ton Schluff
+    (1065,1460,  1.4),  # Tonstein Ton
 ]
 # =====================================================
 # DATEIEN
@@ -139,20 +142,37 @@ dT = T_fluid - T_ground
 
 if boden == "Beispiel Hüllhorst":
 
-    lambda_profile = np.ones_like(z)
+    lambda_profile = np.ones(height_total)
 
-    for z_start, z_end, lambda_layer in huellhorst_schichten:
+    for y_start_layer, y_end_layer, lambda_layer in huellhorst_schichten:
 
-        mask_layer = (
-            (z >= z_start)
-            & (z < z_end)
-        )
+        y_start_layer = int(y_start_layer * scale_factor)
+        y_end_layer = int(y_end_layer * scale_factor)
 
-        lambda_profile[mask_layer] = lambda_layer
+        y_start_local = max(0, y_start_layer - y1_adj)
+        y_end_local = max(0, y_end_layer - y1_adj)
+
+        lambda_profile[
+            y_start_local:y_end_local
+        ] = lambda_layer
+
+    # -------------------------------------------------
+    # GLÄTTUNG FÜR WEICHE ÜBERGÄNGE
+    # -------------------------------------------------
+
+    kernel_size = 35
+
+    kernel = np.ones(kernel_size) / kernel_size
+
+    lambda_profile = np.convolve(
+        lambda_profile,
+        kernel,
+        mode="same"
+    )
 
 else:
 
-    lambda_profile = np.ones_like(z) * lambda_boden
+    lambda_profile = np.ones(height_total) * lambda_boden
 
 if np.max(dT) < dT_min:
     st.error(
@@ -366,18 +386,11 @@ for i in range(height_total):
             # -----------------------------------------
             # TEMPERATURFELD
             # -----------------------------------------
-
-            local_radius = heat_radius * (
-                lambda_interp[min(i, len(lambda_interp)-1)] / 1.5
-            )
-
-            local_radius = max(local_radius, 40)
-
             # lokale Wärmeausbreitung je Schicht
             local_radius = (
                 heat_radius
-                * lambda_interp[
-                    min(i, len(lambda_interp)-1)
+                * lambda_profile[
+                    min(i, len(lambda_profile)-1)
                 ]
                 / 1.5
             )
@@ -463,8 +476,8 @@ for y in range(height_total):
 
             local_bottom_radius = (
                 bottom_radius
-                * lambda_interp[
-                    min(y, len(lambda_interp)-1)
+                * lambda_profile[
+                    min(y, len(lambda_profile)-1)
                 ]
                 / 1.2
             )
