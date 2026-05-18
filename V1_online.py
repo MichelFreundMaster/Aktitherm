@@ -236,11 +236,7 @@ dT_interp = np.interp(
     z,
     dT
 )
-lambda_interp = np.interp(
-    z_new,
-    z,
-    lambda_profile
-)
+
 # =====================================================
 # WÄRMEFELD
 # =====================================================
