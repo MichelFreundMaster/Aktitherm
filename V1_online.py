@@ -142,7 +142,7 @@ dT = T_fluid - T_ground
 
 if boden == "Beispiel Hüllhorst":
 
-    lambda_profile = np.ones(height_total)
+    lambda_profile = np.ones(img_np.shape[0])
 
     for y_start_layer, y_end_layer, lambda_layer in huellhorst_schichten:
 
