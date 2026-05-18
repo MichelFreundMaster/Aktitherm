@@ -417,7 +417,7 @@ x_center_bottom = int((x_left_bottom + x_right_bottom) / 2)
 y_bottom = y2_outer
 
 # zusätzliche Ausbreitung
-bottom_radius = int(heat_radius * 0.8)
+bottom_radius = int(heat_radius * 0.65)
 
 for y in range(height_total):
 
