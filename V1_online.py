@@ -276,7 +276,10 @@ boden_breiten = {
     "Ton": 120,
     "Lehm": 180,
     "Kies": 260,
-    "Grundwasser": 340
+    "Grundwasser": 340,
+
+    # Hüllhorst
+    "Beispiel Hüllhorst": 220
 }
 
 heat_radius = int(
