@@ -136,44 +136,6 @@ T_ground = df.iloc[:, 1].values
 
 dT = T_fluid - T_ground
 
-# =====================================================
-# SCHICHTWEISE λ FÜR HÜLLHORST
-# =====================================================
-
-if boden == "Beispiel Hüllhorst":
-
-    lambda_profile = np.ones(img_np.shape[0])
-
-    for y_start_layer, y_end_layer, lambda_layer in huellhorst_schichten:
-
-        y_start_layer = int(y_start_layer * scale_factor)
-        y_end_layer = int(y_end_layer * scale_factor)
-
-        y_start_local = max(0, y_start_layer - y1_adj)
-        y_end_local = max(0, y_end_layer - y1_adj)
-
-        lambda_profile[
-            y_start_local:y_end_local
-        ] = lambda_layer
-
-    # -------------------------------------------------
-    # GLÄTTUNG FÜR WEICHE ÜBERGÄNGE
-    # -------------------------------------------------
-
-    kernel_size = 35
-
-    kernel = np.ones(kernel_size) / kernel_size
-
-    lambda_profile = np.convolve(
-        lambda_profile,
-        kernel,
-        mode="same"
-    )
-
-else:
-
-    lambda_profile = np.ones(height_total) * lambda_boden
-
 if np.max(dT) < dT_min:
     st.error(
         "Temperaturdifferenz zu klein für einen Temperaturübergang"
@@ -288,6 +250,40 @@ heatmap = np.zeros(
     dtype=np.float32
 )
 
+# =====================================================
+# SCHICHTWEISE λ
+# =====================================================
+
+if boden == "Beispiel Hüllhorst":
+
+    lambda_profile = np.ones(height_total)
+
+    for y_start_layer, y_end_layer, lambda_layer in huellhorst_schichten:
+
+        y_start_layer = int(y_start_layer * scale_factor)
+        y_end_layer = int(y_end_layer * scale_factor)
+
+        y_start_local = max(0, y_start_layer - y1_adj)
+        y_end_local = max(0, y_end_layer - y1_adj)
+
+        lambda_profile[
+            y_start_local:y_end_local
+        ] = lambda_layer
+
+    # weiche Übergänge
+    kernel_size = 35
+
+    kernel = np.ones(kernel_size) / kernel_size
+
+    lambda_profile = np.convolve(
+        lambda_profile,
+        kernel,
+        mode="same"
+    )
+
+else:
+
+    lambda_profile = np.ones(height_total) * lambda_boden
 # =====================================================
 # BODENABHÄNGIGE AUSBREITUNG
 # =====================================================
