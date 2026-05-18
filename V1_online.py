@@ -370,8 +370,19 @@ for i in range(height_total):
 
             local_radius = max(local_radius, 40)
 
-            r_norm = dist / local_radius
+            # lokale Wärmeausbreitung je Schicht
+            local_radius = (
+                heat_radius
+                * lambda_interp[
+                    min(i, len(lambda_interp)-1)
+                ]
+                / 1.5
+            )
 
+            # Mindestwert gegen Kollaps
+            local_radius = max(local_radius, 60)
+
+            r_norm = dist / local_radius
             if dist == 0:
 
                 value = dT_bentonit
@@ -447,7 +458,20 @@ for y in range(height_total):
             # TEMPERATUR
             # -------------------------------------------------
 
-            r_norm = dist / bottom_radius
+            local_bottom_radius = (
+                bottom_radius
+                * lambda_interp[
+                    min(y, len(lambda_interp)-1)
+                ]
+                / 1.2
+            )
+
+            local_bottom_radius = max(
+                local_bottom_radius,
+                60
+            )
+
+            r_norm = dist / local_bottom_radius
 
             value = dT_bentonit * np.exp(
                 -2.2 * r_norm
