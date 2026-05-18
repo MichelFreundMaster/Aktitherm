@@ -45,7 +45,13 @@ T_fluid = st.slider(
 
 boden = st.selectbox(
     "Untergrund auswählen",
-    ["Ton", "Lehm", "Kies", "Grundwasser"]
+    [
+        "Ton",
+        "Lehm",
+        "Kies",
+        "Grundwasser",
+        "Beispiel Hüllhorst"
+    ]
 )
 
 # =====================================================
@@ -57,10 +63,25 @@ boden_dict = {
     "Lehm": ("Lehm.png", 1.3),
     "Kies": ("Kies.png", 2.0),
     "Grundwasser": ("Grundwasser.png", 2.5),
-}
 
+    # Beispiel Hüllhorst
+    "Beispiel Hüllhorst": ("Schichtenverzeichnis Hüllhorst.png", None),
+}
 img_file, lambda_boden = boden_dict[boden]
 
+# =====================================================
+# SCHICHTEN HÜLLHORST
+# =====================================================
+
+huellhorst_schichten = [
+    (0.0,   2.3,   1.2),
+    (2.3,  11.3,   1.8),
+    (11.3, 14.2,   2.0),
+    (14.2, 17.1,   1.0),
+    (17.1, 21.2,   1.3),
+    (21.2, 33.4,   1.1),
+    (33.4, 140.0,  1.4),
+]
 # =====================================================
 # DATEIEN
 # =====================================================
@@ -111,6 +132,27 @@ T_ground = df.iloc[:, 1].values
 # =====================================================
 
 dT = T_fluid - T_ground
+
+# =====================================================
+# SCHICHTWEISE λ FÜR HÜLLHORST
+# =====================================================
+
+if boden == "Beispiel Hüllhorst":
+
+    lambda_profile = np.ones_like(z)
+
+    for z_start, z_end, lambda_layer in huellhorst_schichten:
+
+        mask_layer = (
+            (z >= z_start)
+            & (z < z_end)
+        )
+
+        lambda_profile[mask_layer] = lambda_layer
+
+else:
+
+    lambda_profile = np.ones_like(z) * lambda_boden
 
 if np.max(dT) < dT_min:
     st.error(
@@ -212,7 +254,11 @@ dT_interp = np.interp(
     z,
     dT
 )
-
+lambda_interp = np.interp(
+    z_new,
+    z,
+    lambda_profile
+)
 # =====================================================
 # WÄRMEFELD
 # =====================================================
@@ -318,7 +364,13 @@ for i in range(height_total):
             # TEMPERATURFELD
             # -----------------------------------------
 
-            r_norm = dist / heat_radius
+            local_radius = heat_radius * (
+                lambda_interp[min(i, len(lambda_interp)-1)] / 1.5
+            )
+
+            local_radius = max(local_radius, 40)
+
+            r_norm = dist / local_radius
 
             if dist == 0:
 
@@ -491,26 +543,28 @@ x_scale = x1 - 80
 
 ticks = np.linspace(z_min, z_max, 6)
 
-for t in ticks:
+if boden != "Beispiel Hüllhorst":
+    
+    for t in ticks:
 
-    y = y1_adj + (
-        (t - z_min)
-        / (z_max - z_min)
-        * (y2_adj - y1_adj)
-    )
+        y = y1_adj + (
+            (t - z_min)
+            / (z_max - z_min)
+            * (y2_adj - y1_adj)
+        )
 
-    draw.line(
-        (x_scale, y, x_scale + 15, y),
-        fill="black",
-        width=3
-    )
+        draw.line(
+            (x_scale, y, x_scale + 15, y),
+            fill="black",
+            width=3
+        )
 
-    draw.text(
-        (x_scale - 90, y - 15),
-        f"{int(t)}",
-        fill="black",
-        font=font
-    )
+        draw.text(
+            (x_scale - 90, y - 15),
+            f"{int(t)}",
+            fill="black",
+            font=font
+        )
 
 # =====================================================
 # LABEL TIEFE
