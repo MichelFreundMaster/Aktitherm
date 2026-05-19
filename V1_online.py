@@ -602,14 +602,16 @@ if boden != "Beispiel Hüllhorst":
 # LABEL TIEFE
 # =====================================================
 
-y_center_scale = (y1_adj + y2_adj) / 2
+if boden != "Beispiel Hüllhorst":
 
-draw.text(
-    (x_scale - 300, int(y_center_scale - 20)),
-    "Tiefe [m]",
-    fill="white",
-    font=font
-)
+    y_center_scale = (y1_adj + y2_adj) / 2
+
+    draw.text(
+        (x_scale - 300, int(y_center_scale - 20)),
+        "Tiefe [m]",
+        fill="white",
+        font=font
+    )
 
 # =====================================================
 # FARBSKALA
