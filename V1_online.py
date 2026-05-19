@@ -841,7 +841,50 @@ draw.text(
     text,
     fill="white",
     font=font_big
-)    
+)
+
+# =====================================================
+# GEDREHTER TEXT
+# =====================================================
+
+label_text = f"aktiver Bereich {i+1}"
+
+bbox = font_big.getbbox(label_text)
+
+label_width = bbox[2] - bbox[0]
+label_height = bbox[3] - bbox[1]
+
+pad = 40
+
+txt_img = Image.new(
+    "RGBA",
+    (label_width + pad, label_height + pad),
+    (0, 0, 0, 0)
+)
+
+txt_draw = ImageDraw.Draw(txt_img)
+
+txt_draw.text(
+    (pad // 2, pad // 2),
+    label_text,
+    fill="white",
+    font=font_big
+)
+
+txt_img = txt_img.rotate(
+    90,
+    expand=True
+)
+
+result.paste(
+    txt_img,
+    (
+        int(x_dim + 70),
+        int(y_text - txt_img.height / 2)
+    ),
+    txt_img
+)
+
 # =====================================================
 # SPEICHERN
 # =====================================================
