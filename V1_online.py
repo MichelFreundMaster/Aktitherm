@@ -762,128 +762,128 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
 
     draw = ImageDraw.Draw(result)
 
-# =====================================================
-# TECHNISCHE BEMASSUNG
-# =====================================================
+    # =====================================================
+    # TECHNISCHE BEMASSUNG
+    # =====================================================
 
-# Maßlinie rechts
-x_dim = x_right + 120
+    # Maßlinie rechts
+    x_dim = x_right + 120
 
-# Pfeilgröße
-arrow_size = 18
+    # Pfeilgröße
+    arrow_size = 18
 
-# obere Pfeilspitze
-draw.line(
-    [(x_dim, y_start), (x_dim, y_ende)],
-    fill="white",
-    width=3
-)
+    # obere Pfeilspitze
+    draw.line(
+        [(x_dim, y_start), (x_dim, y_ende)],
+        fill="white",
+        width=3
+    )
 
-# Pfeil oben
-draw.line(
-    [(x_dim, y_start),
-     (x_dim - arrow_size, y_start + arrow_size)],
-    fill="white",
-    width=3
-)
+    # Pfeil oben
+    draw.line(
+        [(x_dim, y_start),
+         (x_dim - arrow_size, y_start + arrow_size)],
+        fill="white",
+        width=3
+    )
 
-draw.line(
-    [(x_dim, y_start),
-     (x_dim + arrow_size, y_start + arrow_size)],
-    fill="white",
-    width=3
-)
+    draw.line(
+        [(x_dim, y_start),
+         (x_dim + arrow_size, y_start + arrow_size)],
+        fill="white",
+        width=3
+    )
 
-# Pfeil unten
-draw.line(
-    [(x_dim, y_ende),
-     (x_dim - arrow_size, y_ende - arrow_size)],
-    fill="white",
-    width=3
-)
+    # Pfeil unten
+    draw.line(
+        [(x_dim, y_ende),
+         (x_dim - arrow_size, y_ende - arrow_size)],
+        fill="white",
+        width=3
+    )
 
-draw.line(
-    [(x_dim, y_ende),
-     (x_dim + arrow_size, y_ende - arrow_size)],
-    fill="white",
-    width=3
-)
+    draw.line(
+        [(x_dim, y_ende),
+         (x_dim + arrow_size, y_ende - arrow_size)],
+        fill="white",
+        width=3
+    )
 
-# horizontale Anschlusslinien
-draw.line(
-    [(x_right, y_start), (x_dim, y_start)],
-    fill="white",
-    width=2
-)
+    # horizontale Anschlusslinien
+    draw.line(
+        [(x_right, y_start), (x_dim, y_start)],
+        fill="white",
+        width=2
+    )
 
-draw.line(
-    [(x_right, y_ende), (x_dim, y_ende)],
-    fill="white",
-    width=2
-)
+    draw.line(
+        [(x_right, y_ende), (x_dim, y_ende)],
+        fill="white",
+        width=2
+    )
 
-# tatsächliche Mächtigkeit
-thickness = abs(z_ende - z_start)
+    # tatsächliche Mächtigkeit
+    thickness = abs(z_ende - z_start)
 
-text = f"{thickness:.1f} m"
+    text = f"{thickness:.1f} m"
 
-bbox = font_big.getbbox(text)
+    bbox = font_big.getbbox(text)
 
-text_width = bbox[2] - bbox[0]
+    text_width = bbox[2] - bbox[0]
 
-y_text = (y_start + y_ende) / 2
+    y_text = (y_start + y_ende) / 2
 
-draw.text(
-    (
-        x_dim - text_width / 2,
-        y_text - 20
-    ),
-    text,
-    fill="white",
-    font=font_big
-)
+    draw.text(
+        (
+            x_dim - text_width / 2,
+            y_text - 20
+        ),
+        text,
+        fill="white",
+        font=font_big
+    )
 
-# =====================================================
-# GEDREHTER TEXT
-# =====================================================
+    # =====================================================
+    # GEDREHTER TEXT
+    # =====================================================
 
-label_text = f"aktiver Bereich {i+1}"
+    label_text = f"aktiver Bereich {i+1}"
 
-bbox = font_big.getbbox(label_text)
+    bbox = font_big.getbbox(label_text)
 
-label_width = bbox[2] - bbox[0]
-label_height = bbox[3] - bbox[1]
+    label_width = bbox[2] - bbox[0]
+    label_height = bbox[3] - bbox[1]
 
-pad = 40
+    pad = 40
 
-txt_img = Image.new(
-    "RGBA",
-    (label_width + pad, label_height + pad),
-    (0, 0, 0, 0)
-)
+    txt_img = Image.new(
+        "RGBA",
+        (label_width + pad, label_height + pad),
+        (0, 0, 0, 0)
+    )
 
-txt_draw = ImageDraw.Draw(txt_img)
+    txt_draw = ImageDraw.Draw(txt_img)
 
-txt_draw.text(
-    (pad // 2, pad // 2),
-    label_text,
-    fill="white",
-    font=font_big
-)
+    txt_draw.text(
+        (pad // 2, pad // 2),
+        label_text,
+        fill="white",
+        font=font_big
+    )
 
-txt_img = txt_img.rotate(
-    90,
-    expand=True
-)
+    txt_img = txt_img.rotate(
+        90,
+        expand=True
+    )
 
-result.paste(
-    txt_img,
-    (
-        int(x_dim - 250),
-        int(y_text - txt_img.height / 2)
-    ),
-    txt_img
-)
+    result.paste(
+        txt_img,
+        (
+            int(x_dim - 250),
+            int(y_text - txt_img.height / 2)
+        ),
+        txt_img
+    )
 
 # =====================================================
 # SPEICHERN
