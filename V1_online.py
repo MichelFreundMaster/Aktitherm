@@ -833,16 +833,6 @@ text_width = bbox[2] - bbox[0]
 
 y_text = (y_start + y_ende) / 2
 
-draw.rectangle(
-    (
-        x_dim - text_width/2 - 15,
-        y_text - 28,
-        x_dim + text_width/2 + 15,
-        y_text + 28
-    ),
-    fill=(0,0,0,180)
-)
-
 draw.text(
     (
         x_dim - text_width / 2,
