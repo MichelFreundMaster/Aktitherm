@@ -879,7 +879,7 @@ txt_img = txt_img.rotate(
 result.paste(
     txt_img,
     (
-        int(x_dim + 0),
+        int(x_dim - 150),
         int(y_text - txt_img.height / 2)
     ),
     txt_img
