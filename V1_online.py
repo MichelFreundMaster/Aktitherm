@@ -279,7 +279,7 @@ if boden == "Beispiel Hüllhorst":
 
 else:
 
-    lambda_profile = np.ones(height_total) * lambda_boden
+    lambda_profile = np.ones(img_np.shape[0]) * lambda_boden
 # =====================================================
 # BODENABHÄNGIGE AUSBREITUNG
 # =====================================================
