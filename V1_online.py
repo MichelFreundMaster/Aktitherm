@@ -559,12 +559,12 @@ draw = ImageDraw.Draw(result)
 
 font = ImageFont.truetype(
     font_path,
-    int(20 * scale_factor)
+    int(28 * scale_factor)
 )
 
 font_big = ImageFont.truetype(
     font_path,
-    int(20 * scale_factor)
+    int(28 * scale_factor)
 )
 
 # =====================================================
@@ -587,14 +587,14 @@ if boden != "Beispiel Hüllhorst":
 
         draw.line(
             (x_scale, y, x_scale + 15, y),
-            fill="black",
+            fill="white",
             width=3
         )
 
         draw.text(
             (x_scale - 90, y - 15),
             f"{int(t)}",
-            fill="black",
+            fill="white",
             font=font
         )
 
@@ -607,7 +607,7 @@ y_center_scale = (y1_adj + y2_adj) / 2
 draw.text(
     (x_scale - 300, int(y_center_scale - 20)),
     "Tiefe [m]",
-    fill="black",
+    fill="white",
     font=font
 )
 
@@ -665,14 +665,14 @@ for t in ticks:
     draw.text(
         (x_cb + 70, y - 15),
         f"{t:.0f}",
-        fill="black",
+        fill="white",
         font=font
     )
 
 draw.text(
     (x_cb, y_cb - 60),
     "ΔT [K]",
-    fill="black",
+    fill="white",
     font=font
 )
 
@@ -697,13 +697,13 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
     # Linien
     draw.line(
         (x_left, y_start, x_right, y_start),
-        fill="black",
+        fill="white",
         width=4
     )
 
     draw.line(
         (x_left, y_ende, x_right, y_ende),
-        fill="black",
+        fill="white",
         width=4
     )
 
@@ -781,7 +781,7 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
     txt_draw.text(
         (pad // 2, pad // 2),
         text,
-        fill="black",
+        fill="white",
         font=font_big
     )
 
