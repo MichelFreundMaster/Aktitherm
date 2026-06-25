@@ -693,10 +693,10 @@ draw.text(
 # LÄNGENANGABEN
 # =====================================================
 
-y_info = y2_outer + 150
+y_info = y2_outer + 100
 
 draw.text(
-    (420, y_info),
+    (50, y_info),
     f"Geometrische Länge: {z_geometrisch:.1f} m",
     fill="white",
     font=font
