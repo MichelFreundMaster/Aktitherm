@@ -693,34 +693,20 @@ draw.text(
 # LÄNGENANGABEN
 # =====================================================
 
-y_info = y_cb + cb_height + 70
+y_info = y2_outer + 150
 
 draw.text(
-    (x_cb - 220, y_info),
-    "Geometrische Länge:",
+    (420, y_info),
+    f"Geometrische Länge: {z_geometrisch:.1f} m",
     fill="white",
     font=font
 )
 
 draw.text(
-    (x_cb - 220, y_info + 90),
-    f"{z_geometrisch:.1f} m",
-    fill="white",
-    font=font_big
-)
-
-draw.text(
-    (x_cb - 220, y_info + 240),
-    "Thermisch aktive Länge:",
+    (1100, y_info),
+    f"Thermisch aktive Länge: {z_aktiv:.1f} m",
     fill="white",
     font=font
-)
-
-draw.text(
-    (x_cb - 220, y_info + 330),
-    f"{z_aktiv:.1f} m",
-    fill="white",
-    font=font_big
 )
 
 # =====================================================
