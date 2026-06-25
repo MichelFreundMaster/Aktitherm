@@ -170,6 +170,17 @@ if in_range:
     active_ranges.append((start, z[-1]))
 
 # =====================================================
+# THERMISCH AKTIVE GESAMTLÄNGE
+# =====================================================
+
+z_aktiv = sum(
+    ende - start
+    for start, ende in active_ranges
+)
+
+z_geometrisch = z_max - z_min
+
+# =====================================================
 # BILD LADEN
 # =====================================================
 
@@ -676,6 +687,40 @@ draw.text(
     "ΔT [K]",
     fill="white",
     font=font
+)
+
+# =====================================================
+# LÄNGENANGABEN
+# =====================================================
+
+y_info = y_cb + cb_height + 70
+
+draw.text(
+    (x_cb, y_info),
+    "Geometrische Länge:",
+    fill="white",
+    font=font
+)
+
+draw.text(
+    (x_cb, y_info + 45),
+    f"{z_geometrisch:.1f} m",
+    fill="white",
+    font=font_big
+)
+
+draw.text(
+    (x_cb, y_info + 120),
+    "Thermisch aktive Länge:",
+    fill="white",
+    font=font
+)
+
+draw.text(
+    (x_cb, y_info + 165),
+    f"{z_aktiv:.1f} m",
+    fill="white",
+    font=font_big
 )
 
 # =====================================================
