@@ -696,7 +696,7 @@ draw.text(
 y_info = y2_outer + 100
 
 draw.text(
-    (50, y_info),
+    (100, y_info),
     f"Geometrische Länge: {z_geometrisch:.1f} m",
     fill="white",
     font=font
