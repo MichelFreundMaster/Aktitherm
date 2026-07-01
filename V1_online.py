@@ -735,13 +735,13 @@ for i, (z_start, z_ende) in enumerate(active_ranges):
 
     if boden == "Beispiel Hüllhorst":
 
-    y_start = tiefe_to_pixel_huellhorst(
-        z_start
-    )
+        y_start = tiefe_to_pixel_huellhorst(
+            z_start
+        )
 
-    y_ende = tiefe_to_pixel_huellhorst(
-        z_ende
-    )
+        y_ende = tiefe_to_pixel_huellhorst(
+            z_ende
+        )
 
 else:
 
