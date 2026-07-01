@@ -608,17 +608,11 @@ if boden != "Beispiel Hüllhorst":
     
     for t in ticks:
 
-        if boden == "Beispiel Hüllhorst":
-
-    y = tiefe_to_pixel_huellhorst(t)
-
-else:
-
-    y = y1_adj + (
-        (t - z_min)
-        / (z_max - z_min)
-        * (y2_adj - y1_adj)
-    )
+        y = y1_adj + (
+    (t - z_min)
+    / (z_max - z_min)
+    * (y2_adj - y1_adj)
+)
 
         draw.line(
             (x_scale, y, x_scale + 15, y),
