@@ -85,6 +85,24 @@ huellhorst_schichten = [
     (883, 1065,  1.1),  # Ton Schluff
     (1065,1460,  1.4),  # Tonstein Ton
 ]
+
+def tiefe_to_pixel_huellhorst(z_wert):
+
+    for p1, p2, z1, z2 in huellhorst_tiefen:
+
+        if z1 <= z_wert <= z2:
+
+            anteil = (
+                (z_wert - z1)
+                / (z2 - z1)
+            )
+
+            return (
+                p1
+                + anteil * (p2 - p1)
+            ) * scale_factor
+
+    return y2_outer
 # =====================================================
 # DATEIEN
 # =====================================================
@@ -590,11 +608,17 @@ if boden != "Beispiel Hüllhorst":
     
     for t in ticks:
 
-        y = y1_adj + (
-            (t - z_min)
-            / (z_max - z_min)
-            * (y2_adj - y1_adj)
-        )
+        if boden == "Beispiel Hüllhorst":
+
+    y = tiefe_to_pixel_huellhorst(t)
+
+else:
+
+    y = y1_adj + (
+        (t - z_min)
+        / (z_max - z_min)
+        * (y2_adj - y1_adj)
+    )
 
         draw.line(
             (x_scale, y, x_scale + 15, y),
@@ -714,6 +738,18 @@ draw.text(
 # =====================================================
 
 for i, (z_start, z_ende) in enumerate(active_ranges):
+
+    if boden == "Beispiel Hüllhorst":
+
+    y_start = tiefe_to_pixel_huellhorst(
+        z_start
+    )
+
+    y_ende = tiefe_to_pixel_huellhorst(
+        z_ende
+    )
+
+else:
 
     y_start = y1_adj + (
         (z_start - z_min)
