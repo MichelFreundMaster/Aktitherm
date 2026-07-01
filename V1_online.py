@@ -83,7 +83,7 @@ huellhorst_schichten = [
     (671,  778,  1.0),  # Ton weich
     (778,  883,  1.3),  # Tonstein verwittert
     (883, 1065,  1.1),  # Ton Schluff
-    (1065,1460,  1.4),  # Tonstein Ton
+    (1065,1348,  1.4),  # Tonstein Ton
 ]
 
 huellhorst_tiefen = [
@@ -94,7 +94,7 @@ huellhorst_tiefen = [
     (671, 778,  14,  17),
     (778, 883,  17,  21),
     (883,1065,  21,  33),
-    (1065,1460, 33, 140)
+    (1065,1348, 33, 140)
 
 ]
 
